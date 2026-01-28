@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Based Speaking Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            max-width: 500px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background-image: url('static/images/background.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 60px 40px;
+            position: relative;
+            text-align: center;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .header h1,
+        .header p {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .header p {
+            color: white;
+            font-size: 13px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .test-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .test-info h3 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .info-item span {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .input-group input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 600px) {
+            .content {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎤 AI-Based Speaking Assessment</h1>
+            <p>An Educational AI Project by Tito Yuliyan</p>
+        </div>
+
+        <div class="content">
+            <div class="test-info">
+                <h3>📋 Test Information</h3>
+                <div class="info-item">
+                    <span>📝</span>
+                    <span>10 Sentences</span>
+                </div>
+                <div class="info-item">
+                    <span>⏱️</span>
+                    <span>Approximately 10-15 minutes</span>
+                </div>
+                <div class="info-item">
+                    <span>🎯</span>
+                    <span>Read each sentence clearly</span>
+                </div>
+                <div class="info-item">
+                    <span>📊</span>
+                    <span>Instant AI feedback</span>
+                </div>
+            </div>
+
+            <form method="POST" action="/start-test" id="startForm">
+                <div class="input-group">
+                    <label for="studentName">Student Name</label>
+                    <input type="text" name="name" id="studentName" placeholder="Enter your full name" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    ▶️ Start Test
+                </button>
+                
+                <a href="/scores" class="btn btn-secondary" style="display: block; text-align: center; text-decoration: none; padding: 12px;">
+                    📊 View Scores
+                </a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

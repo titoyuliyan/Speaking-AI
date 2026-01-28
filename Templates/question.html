@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question {{ question_num }} - Speaking Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .progress-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+        }
+
+        .student-info {
+            font-size: 14px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .progress-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar-container {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: white;
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .question-label {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .prompt-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .prompt-text {
+            font-size: 20px;
+            line-height: 1.6;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .recording-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .status-indicator.ready {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-indicator.recording {
+            background: #ffebee;
+            color: #c62828;
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-indicator.recorded {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .timer {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 15px 0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-record {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-record:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-stop {
+            background: #ef5350;
+            color: white;
+        }
+
+        .btn-stop:hover:not(:disabled) {
+            background: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        .btn-submit {
+            background: #4caf50;
+            color: white;
+            width: 100%;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            background: #43a047;
+            transform: translateY(-2px);
+        }
+
+        .audio-preview {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .audio-preview.show {
+            display: block;
+        }
+
+        .audio-preview audio {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            .content {
+                padding: 25px;
+            }
+
+            .prompt-text {
+                font-size: 18px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="progress-header">
+            <div class="student-info">👤 {{ student_name }}</div>
+            <div class="progress-text">Question {{ question_num }} of {{ total_questions }}</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: {{ (question_num / total_questions * 100)|int }}%"></div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="question-label">📖 READ THE FOLLOWING SENTENCE ALOUD:</div>
+            
+            <div class="prompt-box">
+                <div class="prompt-text">"{{ prompt }}"</div>
+            </div>
+
+            <div class="recording-section">
+                <div class="status-indicator ready" id="statusIndicator">
+                    <span class="pulse-dot"></span>
+                    <span id="statusText">Ready to Record</span>
+                </div>
+
+                <div class="timer" id="timer">00:00</div>
+
+                <div class="controls">
+                    <button class="btn btn-record" id="btnRecord" onclick="startRecording()">
+                        🎤 Record
+                    </button>
+                    <button class="btn btn-stop" id="btnStop" onclick="stopRecording()" disabled>
+                        ⏹️ Stop
+                    </button>
+                </div>
+
+                <div class="audio-preview" id="audioPreview">
+                    <p style="color: #666; font-size: 14px; margin-bottom: 10px;">Audio Preview:</p>
+                    <audio controls id="audioPlayer"></audio>
+                </div>
+            </div>
+
+            <form id="submitForm">
+                <input type="hidden" name="question_num" value="{{ question_num }}">
+                <input type="hidden" name="audio" id="audioData">
+                <button type="submit" class="btn btn-submit" id="btnSubmit" disabled>
+                    ✅ Submit & Continue
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h3>Processing your recording...</h3>
+            <p>Please wait while AI analyzes your speech</p>
+        </div>
+    </div>
+
+    <script>
+        let recorder, audioChunks = [];
+        let timerInterval;
+        let seconds = 0;
+
+        const btnRecord = document.getElementById('btnRecord');
+        const btnStop = document.getElementById('btnStop');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const statusText = document.getElementById('statusText');
+        const timer = document.getElementById('timer');
+        const audioPreview = document.getElementById('audioPreview');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                recorder = new MediaRecorder(stream);
+                
+                recorder.start();
+                audioChunks = [];
+                seconds = 0;
+                
+                btnRecord.disabled = true;
+                btnStop.disabled = false;
+                btnSubmit.disabled = true;
+                statusIndicator.className = 'status-indicator recording';
+                statusText.textContent = 'Recording...';
+                audioPreview.classList.remove('show');
+                
+                timerInterval = setInterval(() => {
+                    seconds++;
+                    const mins = Math.floor(seconds / 60);
+                    const secs = seconds % 60;
+                    timer.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                }, 1000);
+                
+                recorder.ondataavailable = e => audioChunks.push(e.data);
+                
+            } catch (error) {
+                alert('Error: Cannot access microphone. Please allow microphone access.');
+                console.error('Error:', error);
+            }
+        }
+
+        function stopRecording() {
+            if (recorder && recorder.state === 'recording') {
+                recorder.stop();
+                clearInterval(timerInterval);
+                
+                recorder.stream.getTracks().forEach(track => track.stop());
+                
+                recorder.onstop = () => {
+                    const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                    
+                    const audioUrl = URL.createObjectURL(blob);
+                    audioPlayer.src = audioUrl;
+                    audioPreview.classList.add('show');
+                    
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        document.getElementById("audioData").value = reader.result;
+                        btnSubmit.disabled = false;
+                    };
+                    reader.readAsDataURL(blob);
+                    
+                    btnRecord.disabled = false;
+                    btnStop.disabled = true;
+                    statusIndicator.className = 'status-indicator recorded';
+                    statusText.textContent = 'Recording Complete';
+                };
+            }
+        }
+
+        document.getElementById('submitForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const audioData = document.getElementById('audioData').value;
+            if (!audioData) {
+                alert('Please record your answer first!');
+                return;
+            }
+            
+            loadingOverlay.classList.add('show');
+            btnSubmit.disabled = true;
+            
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('/submit-answer', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'complete' || result.status === 'next') {
+                    window.location.href = result.redirect;
+                } else if (result.error) {
+                    alert('Error: ' + result.error);
+                    loadingOverlay.classList.remove('show');
+                    btnSubmit.disabled = false;
+                }
+            } catch (error) {
+                alert('Error submitting answer: ' + error);
+                loadingOverlay.classList.remove('show');
+                btnSubmit.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
